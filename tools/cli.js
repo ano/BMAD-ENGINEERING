@@ -114,22 +114,37 @@ program
       // Validate by attempting to build all agents and teams
       const agents = await builder.resolver.listAgents();
       const teams = await builder.resolver.listTeams();
-      
+
       console.log('Validating agents...');
       for (const agent of agents) {
         await builder.resolver.resolveAgentDependencies(agent);
         console.log(`  ✓ ${agent}`);
       }
-      
+
       console.log('\nValidating teams...');
       for (const team of teams) {
         await builder.resolver.resolveTeamDependencies(team);
         console.log(`  ✓ ${team}`);
       }
-      
+
       console.log('\nAll configurations are valid!');
     } catch (error) {
       console.error('Validation failed:', error.message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('lint:architecture')
+  .description('Enforce architecture and safety rules')
+  .option('-c, --config <path>', 'Path to architecture rules file', 'architecture-rules.yaml')
+  .action((options) => {
+    const { lintArchitecture } = require('./lib/architecture-linter');
+    try {
+      lintArchitecture({ rootDir: process.cwd(), configFile: options.config });
+      console.log('Architecture lint passed!');
+    } catch (error) {
+      console.error('Architecture lint failed:', error.message);
       process.exit(1);
     }
   });

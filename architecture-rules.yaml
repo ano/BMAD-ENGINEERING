@@ -1,0 +1,3 @@
+# Architecture lint configuration
+# requireCriticalRule: if true, architecture docs must contain <critical_rule>
+requireCriticalRule: true
